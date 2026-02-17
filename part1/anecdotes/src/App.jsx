@@ -59,6 +59,7 @@ const App = () => {
       <p>{"has " + votes[selected] + " votes"}</p>
       <Display name={title2}/>
       <p>{anecdotes[anecdoteWithMostVotes]}</p>
+      <p>{"has " + votes[anecdoteWithMostVotes] + " votes"}</p>
     </div>
   )
 }
