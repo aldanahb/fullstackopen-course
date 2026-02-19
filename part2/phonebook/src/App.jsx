@@ -12,13 +12,12 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
   const [personsSearch, setPersonsSearch] = useState([])
-  const [all, setAll] = useState(true)
   const [exitMessage, setExitMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
 
   // recuperar información del servidor json
   const hook = () => {
-    PersonService.getAllPersons().then(persons => {setPersons(persons)})
+    PersonService.getAllPersons().then(persons => {setPersons(persons), setPersonsSearch(persons)})
   }
 
   useEffect(hook,[])
@@ -41,8 +40,9 @@ const App = () => {
     else if(!findPerson) {
       personObject = {'name': newName, 'number': newNumber}
       PersonService.createPerson(personObject).then(person => {
-        setPersons(persons.concat(person))
-        setAll(true)
+        let listPersonsUpdate = [...persons, person]
+        setPersons(listPersonsUpdate)
+        setPersonsSearch(listPersonsUpdate)
 
         // mostrar mensaje de éxito
         setExitMessage(`${newName} has been added to the list`)
@@ -68,9 +68,8 @@ const App = () => {
   const handleSearchChange = event => {
     const filter = event.target.value
     setNewSearch(filter)
-    if(filter == '') setAll(true)
+    if(filter == '') setPersonsSearch(persons)
     else {
-      setAll(false)
       setPersonsSearch(persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())))
     }
   }
@@ -80,6 +79,7 @@ const App = () => {
     PersonService.updatePerson(updPerson).then(person => {
       const listPersonsUpdate = persons.map(p => p.id !== person.id ? p : person)
       setPersons(listPersonsUpdate)
+      setPersonsSearch(listPersonsUpdate)
       // mostrar mensaje de éxito
       setExitMessage(`${newName}'s data has been updated`)
       setTimeout(() => {
@@ -101,8 +101,11 @@ const App = () => {
   // eliminar persona
   const deletePerson = person => {
     if(window.confirm(`Delete ${person.name}?`)) {
-      PersonService.deletePerson(person.id).then(() => 
-      setPersons(persons.filter(p => p.id !== person.id))
+      PersonService.deletePerson(person.id).then(() => {
+      const listPersonsUpdate = persons.filter(p => p.id !== person.id)
+      setPersons(listPersonsUpdate)
+      setPersonsSearch(listPersonsUpdate)
+    }
       ).catch(() => {
         // mostrar mensaje de error
         setErrorMessage(`Information of ${newName} has already been removed from server`)
@@ -113,7 +116,7 @@ const App = () => {
       )
     }
   }
-  
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -123,7 +126,7 @@ const App = () => {
       <ExitMessage message={exitMessage}/>
       <ErrorMessage message={errorMessage}/>
       <h2>Numbers</h2>
-      <Persons all={all} persons={persons} personsSearch={personsSearch} deletePerson={deletePerson}/>
+      <Persons personsSearch={personsSearch} deletePerson={deletePerson}/>
     </div>
   )
 }
