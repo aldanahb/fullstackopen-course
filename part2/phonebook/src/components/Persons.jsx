@@ -1,11 +1,19 @@
 import PersonData from './PersonData'
 
 const Persons = (props) => {
+
+    const personsToShow = props.all 
+    ? props.persons 
+    : props.personsSearch
+
     return(
         <div>
-            {props.all 
-            ? (props.persons.map((person,i) => <PersonData key={i} name={person.name} number={person.number}/>)) 
-            : (props.personsSearch.map((person,i) => <PersonData key={i} name={person.name} number={person.number}/>))}
+            {(personsToShow.map(person => 
+            <PersonData 
+                key={person.id} 
+                name={person.name} 
+                number={person.number} 
+                deletePerson={() => props.deletePerson(person)}/>))}
         </div>
     )
 
