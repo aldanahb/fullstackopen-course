@@ -3,6 +3,7 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import PersonService from './services/persons'
+import { ExitMessage, ErrorMessage } from './components/Message'
 
 const App = () => {
   
@@ -12,6 +13,8 @@ const App = () => {
   const [newSearch, setNewSearch] = useState('')
   const [personsSearch, setPersonsSearch] = useState([])
   const [all, setAll] = useState(true)
+  const [exitMessage, setExitMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   // recuperar información del servidor json
   const hook = () => {
@@ -40,6 +43,12 @@ const App = () => {
       PersonService.createPerson(personObject).then(person => {
         setPersons(persons.concat(person))
         setAll(true)
+
+        // mostrar mensaje de éxito
+        setExitMessage(`${newName} has been added to the list`)
+        setTimeout(() => {
+          setExitMessage(null)
+        }, 5000)
         setNewName('')
         setNewNumber('')
         }
@@ -71,8 +80,20 @@ const App = () => {
     PersonService.updatePerson(updPerson).then(person => {
       const listPersonsUpdate = persons.map(p => p.id !== person.id ? p : person)
       setPersons(listPersonsUpdate)
+      // mostrar mensaje de éxito
+      setExitMessage(`${newName}'s data has been updated`)
+      setTimeout(() => {
+          setExitMessage(null)
+          }, 5000)
       setNewName('')
       setNewNumber('')
+      }
+    ).catch(() => {
+        // mostrar mensaje de error
+        setErrorMessage(`Information of ${newName} has already been removed from server`)
+        setTimeout(() => {
+          setErrorMessage(null)
+          }, 5000)
       }
     )
   }
@@ -82,6 +103,13 @@ const App = () => {
     if(window.confirm(`Delete ${person.name}?`)) {
       PersonService.deletePerson(person.id).then(() => 
       setPersons(persons.filter(p => p.id !== person.id))
+      ).catch(() => {
+        // mostrar mensaje de error
+        setErrorMessage(`Information of ${newName} has already been removed from server`)
+        setTimeout(() => {
+          setErrorMessage(null)
+          }, 5000)
+        }
       )
     }
   }
@@ -92,10 +120,11 @@ const App = () => {
       <Filter search={newSearch} handler={handleSearchChange}/>
       <h3>add a new</h3>
       <PersonForm function={addPerson} texts={['name','number']} data={[newName,newNumber]} handlers={[handleNameChange,handleNumberChange]}/>
+      <ExitMessage message={exitMessage}/>
+      <ErrorMessage message={errorMessage}/>
       <h2>Numbers</h2>
       <Persons all={all} persons={persons} personsSearch={personsSearch} deletePerson={deletePerson}/>
     </div>
-    
   )
 }
 
