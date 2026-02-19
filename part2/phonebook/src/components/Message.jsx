@@ -10,9 +10,9 @@ const ExitMessage = ({message}) => {
             'background': '#9ed29e',
             'fontSize': 15,
             'borderStyle': 'solid',
-            'border-radius': 5,
+            'borderRadius': 5,
             'padding': 10,
-            'margin-bottom': 10
+            'marginBottom': 10
         }
 
         return (<div style={messageStyle}> {message} </div>)
@@ -30,9 +30,9 @@ const ErrorMessage = ({message}) => {
             'background': '#e7adab',
             'fontSize': 15,
             'borderStyle': 'solid',
-            'border-radius': 5,
+            'borderRadius': 5,
             'padding': 10,
-            'margin-bottom': 10
+            'marginBottom': 10
         }
 
         return (<div style={messageStyle}> {message} </div>)

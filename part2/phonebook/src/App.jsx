@@ -29,9 +29,9 @@ const App = () => {
 
     let personObject
 
-    const findPerson = persons.find(p => p.name === newName)
+    const findPerson = persons.find(p => p.name.trim() === newName.trim())
 
-    if(findPerson && findPerson.number == newNumber) {
+    if(findPerson && findPerson.number.trim() == newNumber.trim()) {
       alert(`${newName} is already added to phonebook`)
     }
     else if(findPerson && window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
