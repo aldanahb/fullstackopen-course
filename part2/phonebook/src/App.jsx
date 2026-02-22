@@ -52,7 +52,10 @@ const App = () => {
         setNewName('')
         setNewNumber('')
         }
-      )
+      ).catch(error => { setErrorMessage(error.response.data.error)
+                        setTimeout(() => {
+                        setErrorMessage(null)
+                      }, 6000) })
     }
   }
 
@@ -88,9 +91,11 @@ const App = () => {
       setNewName('')
       setNewNumber('')
       }
-    ).catch(() => {
-        // mostrar mensaje de error
-        setErrorMessage(`Information of ${newName} has already been removed from server`)
+    ).catch(error => {
+        let message
+        if (error.response && error.response.data && error.response.data.error) message = error.response.data.error
+        else message = `Information of ${newName} has already been removed from server`
+        setErrorMessage(message)
         setTimeout(() => {
           setErrorMessage(null)
           }, 5000)
